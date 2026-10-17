@@ -6,7 +6,7 @@ services:
     environment:
       QDRANT_URL: http://qdrant:6333
       DOCS_ROOT: /data
-      HF_HOME: /home/atlas/.cache/huggingface
+      HF_HOME: /tmp/atlas-huggingface
     volumes:
       - ./examples:/data:ro
       - model-cache:/home/atlas/.cache
