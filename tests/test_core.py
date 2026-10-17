@@ -27,7 +27,10 @@ def test_symlink_exclusion(tmp_path):
     (tmp_path / "valid.md").write_text("public")
     outside = tmp_path.parent / "outside-atlas-test.md"
     outside.write_text("private")
-    (tmp_path / "link.md").symlink_to(outside)
+    try:
+        (tmp_path / "link.md").symlink_to(outside)
+    except OSError:
+        pytest.skip("Creating symlinks requires elevated Windows privileges")
     try:
         assert markdown_files(tmp_path, ".") == [tmp_path / "valid.md"]
     finally:
