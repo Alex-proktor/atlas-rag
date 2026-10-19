@@ -1,87 +1,120 @@
 # Atlas RAG
 
-**Local-first, provider-neutral document retrieval. Built to be adapted, not just demonstrated.**
+**Turn internal documentation into permission-aware search and verifiable answers, using your own models.**
 
 [![CI](https://github.com/Alex-proktor/atlas-rag/actions/workflows/ci.yml/badge.svg)](https://github.com/Alex-proktor/atlas-rag/actions/workflows/ci.yml)
 
-Atlas RAG is an open-source Python/FastAPI service that indexes Markdown documentation in Qdrant and returns relevant passages with explicit source references. It is intended as a reusable foundation for internal knowledge assistants, documentation search and agent integrations.
+Atlas is a Python / FastAPI / Qdrant reference platform for internal knowledge assistants. It combines multilingual semantic retrieval with BM25, atomically publishes document updates, and enforces tenant and document permissions before retrieval. Bring an OpenAI-compatible model endpoint; no Llama or Ollama dependency.
 
-**Status: local retrieval MVP verified on Windows/Docker (2026-10-19).** The API successfully indexed a Markdown document and returned a cited search result; 4 unit tests passed and 1 Windows symlink test was skipped. Enterprise security and retrieval quality benchmarks remain unverified. **Not production-ready.**
+**Adoption scope:** a bounded, single-node reference deployment for evaluation and customization. It is not a certified enterprise product. See [security boundaries](docs/security.md) before using confidential data.
 
-## Why Atlas?
+## Five-minute walkthrough
 
-- **No Llama or Ollama lock-in.** Retrieval uses local multilingual Sentence Transformers; a vendor-neutral generation adapter is planned separately.
-- **Evidence-first answers.** Search results contain document paths, chunk indices, similarity scores and the original passages.
-- **Local data boundary.** Documents are mounted read-only, indexed locally, and are not automatically sent to an external model.
-- **Reproducible starter.** Docker Compose, automated unit tests and an openly licensed codebase.
-- **Honest scope.** Authentication, enterprise permissions, evaluation, deletion sync and grounded LLM generation are roadmap items, not claimed features.
-
-## Architecture
-
-```text
-  Markdown files (read-only)
-            |
-   validated document root
-            |
-       text chunker
-            |
- local multilingual embeddings
-            |
-         Qdrant
-            ^
-            |
-       FastAPI search
-            |
-  cited passages + scores
-```
-
-## Run locally
-
-Requires Docker and Docker Compose. First startup downloads the embedding model and needs Internet access.
+Requires Docker Compose and Python 3.11+. Initial image/model downloads depend on your connection.
 
 ```bash
 git clone https://github.com/Alex-proktor/atlas-rag.git
 cd atlas-rag
+python scripts/configure_demo.py
 docker compose up --build -d
-curl http://127.0.0.1:8000/health
-curl -X POST http://127.0.0.1:8000/index -H "Content-Type: application/json" -d '{"path":"."}'
-curl -X POST http://127.0.0.1:8000/search -H "Content-Type: application/json" -d '{"query":"What does Atlas RAG index?","limit":3}'
+python scripts/demo.py
 ```
 
-Interactive API docs: http://127.0.0.1:8000/docs
+The setup generates a random local credential. The demo indexes the synthetic English/Russian handbook, searches it, verifies a cited source and confirms that unauthenticated retrieval is rejected. It never uses your private documents or calls a paid model. Interactive API documentation: http://127.0.0.1:8000/docs.
 
-API: `GET /health`, `POST /index`, `POST /search`.
+Example request after setting `ATLAS_TOKEN` from your private `.local-token`:
 
-For local development without Docker: `python -m pip install -e ".[dev]"` and `pytest -q`. The API needs a reachable Qdrant instance for indexing and search.
+```bash
+curl http://127.0.0.1:8000/search \
+  -H "Authorization: Bearer $ATLAS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"query":"How long are database backups retained?","limit":3}'
+```
 
-## Configuration
+Results include original passages, document path, chunk number, and ranking scores. The sample backup policy says **30 days**. This is fictional demonstration content.
 
-| Environment variable | Default | Description |
-|---|---|---|
-| `QDRANT_URL` | `http://qdrant:6333` | Vector database |
-| `DOCS_ROOT` | `/data` | Allowed document root |
-| `COLLECTION` | `atlas_documents` | Vector collection |
-| `EMBEDDING_MODEL` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Local embedding model |
+## What is implemented
 
-Changing embedding models requires a compatible collection or reindexing. Existing index entries are currently updated by path/chunk number, but removed documents and obsolete chunks are **not** deleted automatically.
+| Capability | Implementation |
+|---|---|
+| Document lifecycle | Content hashes, stable tenant/path/chunk IDs, incremental embedding reuse, scoped deletion sync, full immutable snapshots, atomic Qdrant alias swap |
+| Retrieval | Local multilingual Sentence Transformers, BM25, reciprocal-rank fusion; optional multilingual CrossEncoder reranking |
+| Answers | OpenAI-compatible chat completions; exact quotations validated against retrieved sources; server-generated citations and explicit abstention |
+| Access control | Hashed bearer credentials mapped to server-side tenant, groups and role; prefiltered dense and lexical search; separate tenant filesystem roots |
+| Operations | Docker Compose, non-root API, resource caps, health/readiness endpoints, metadata-only audit, request/rate limits |
+| Integration | Read-only Hermes plugin, with evidence explicitly marked as untrusted data |
+| Quality | Real Qdrant lifecycle/failure/ACL tests, real HTTP provider-contract tests, multilingual labeled evaluation and reproducible commands |
 
-## Security boundaries
+## Architecture
 
-This is a **single-user development service**. API and Qdrant ports bind to localhost by default. It has no API authentication, rate limiting, role-based permissions, tenant isolation, content-size caps, malicious-file sandboxing, or production security review. Do not expose it publicly or index confidential company data without additional controls. Do not commit secrets or private documents.
+```mermaid
+flowchart TD
+  D["Read-only tenant Markdown"] --> S["Hash, chunk, reuse embeddings"]
+  S --> Q["Staging Qdrant snapshot"]
+  Q --> A["Atomic live alias"]
+  U["Authenticated identity"] --> F["Tenant and document filters"]
+  A --> F
+  F --> H["Dense + BM25 / RRF"]
+  H --> R["Optional CrossEncoder"]
+  R --> C["Cited passages"]
+  R --> L["Optional corporate LLM"]
+  L --> V["Exact-quote validator"]
+  V --> O["Cited answer or abstention"]
+```
 
-## Quality and acceptance
+The LLM never decides access rights, executes tools, or receives secrets. Generation is deliberately extractive: the model selects relevant quotations; the server validates and formats them. Citation validation proves provenance, **not semantic relevance**. This restriction is documented rather than presented as unrestricted grounded synthesis.
 
-Automated unit tests cover chunking and path validation. A manual Docker smoke test passed on 2026-10-19: health 200, index 200 (1 chunk), search 200 (source: atlas.md, score: 0.65073764). This is not a retrieval-quality benchmark. The next quality gate is an automated Docker smoke test and labeled evaluation dataset. No accuracy, latency or reliability metrics are claimed until measured.
+## Bring your documents and models
 
-## Roadmap
+Place Markdown under `examples/<tenant>/`. A credential's tenant selects the root; API clients cannot override tenant or groups. `POST /index` synchronizes a relative directory, including deleted files and shorter documents. `acl: []` means everyone **within that tenant**; nonempty ACLs require membership in at least one group. Only writer/admin credentials can index. Read [deployment](docs/deployment.md) for credentials, migrations, backup and retention.
 
-1. **Foundation:** reproducible ingestion and cited retrieval, Docker smoke test, tests and operational fixes — [Issue #1 (completed)](https://github.com/Alex-proktor/atlas-rag/issues/1).
-2. **Lifecycle:** incremental indexing, document update/delete sync and index migrations — [Issue #2](https://github.com/Alex-proktor/atlas-rag/issues/2).
-3. **Retrieval quality:** lexical + vector hybrid search, reranking, labeled benchmarks, recall@k and citation checks — [Issue #3](https://github.com/Alex-proktor/atlas-rag/issues/3).
-4. **Generation:** configurable OpenAI-compatible API (including self-hosted backends), grounded answers and abstention — [Issue #4](https://github.com/Alex-proktor/atlas-rag/issues/4).
-5. **Enterprise:** authentication, document-level permissions, observability, deployment and threat model — [Issue #5](https://github.com/Alex-proktor/atlas-rag/issues/5).
-6. **Integrations:** Hermes connector, polished demo, architecture and adoption guide — [Issue #6](https://github.com/Alex-proktor/atlas-rag/issues/6).
+| Variable | Purpose |
+|---|---|
+| `ATLAS_IDENTITIES` | JSON list: subject, tenant, groups, role, token_sha256; no default credential |
+| `DOCS_ROOT` | Parent of tenant directories; read-only mount |
+| `QDRANT_URL` / `COLLECTION` | Internal database endpoint and logical index namespace |
+| `STATE_ROOT` | Shared writer lock directory; required persistent state |
+| `EMBEDDING_MODEL` | Sentence Transformers model; changing it requires a new collection |
+| `RERANKER_MODEL` | Optional CrossEncoder, e.g. cross-encoder/mmarco-mMiniLMv2-L12-H384-v1 |
+| `LLM_BASE_URL` / `LLM_MODEL` / `LLM_API_KEY` | Optional OpenAI-compatible endpoint, model, environment secret |
+| `LLM_ALLOW_EXTERNAL=true` | Explicit consent to transmit authorized passages to an external HTTPS provider |
+| `ATLAS_PORT` | Loopback API port; default 8000 |
 
-## License
+Enable generation only after choosing an approved provider and data policy. Set the LLM variables in `.env`, restart the API, then call `POST /answer` with the same query schema as search. With no provider configured, search remains local; answer returns a safe 503 when evidence exists. No silent provider fallback.
 
-MIT — see [LICENSE](LICENSE). Contributions and issue reports are welcome.
+## Verification and evaluation
+
+```bash
+python -m pip install -e ".[dev]"
+# Start a disposable Qdrant instance and set QDRANT_TEST_URL first.
+pytest -q
+ruff check atlas_rag tests integrations
+bandit -r atlas_rag integrations
+pip-audit
+# Uses actual embedding model + Qdrant, not a mocked search:
+python -m atlas_rag.evaluate --dataset evaluation/queries.json
+```
+
+Measured on the 24-query synthetic bilingual set (real model + Qdrant, CI run 39229373439):
+
+| Retrieval | Recall@3 | MRR@3 | nDCG@3 |
+|---|---:|---:|---:|
+| BM25 | 1.0000 | 0.9792 | 0.9846 |
+| Dense | 0.9583 | 0.9375 | 0.9430 |
+| Hybrid RRF | 1.0000 | 1.0000 | 1.0000 |
+
+These are in-sample demonstration results, not a general accuracy claim. Reranking and independent enterprise evaluation remain separate acceptance steps.
+
+See [evaluation protocol and limitations](docs/evaluation.md), the committed machine-readable results in `evaluation/`, and [acceptance evidence](docs/acceptance.md). Integration tests explicitly skip when their required real service is absent; CI supplies it. A small bilingual synthetic corpus demonstrates reproducibility, not general enterprise accuracy.
+
+## Integrate and adapt
+
+- [Deployment and adoption guide](docs/deployment.md)
+- [Threat model and security limits](docs/security.md)
+- [Hermes plugin contract](docs/hermes.md)
+- [Architecture decisions and sources](docs/architecture.md)
+- [Release checklist](docs/release.md)
+
+For a real company rollout: replace the demo identities with an identity gateway, load a representative corpus and relevance judgments, validate multilingual quality, obtain a security review and set retention/backup policy. Keep this repository free of proprietary documents and credentials.
+
+MIT licensed — [LICENSE](LICENSE).
