@@ -36,3 +36,6 @@ GET /health is unauthenticated liveness only. GET /ready requires credentials an
 
 ## Windows automation startup
 If Docker Desktop reports that it cannot get ProgramData when launched from a remote process, preserve the standard Windows environment. Restore the missing process variable from [Environment]::GetFolderPath('CommonApplicationData') before launching Docker Desktop. This does not require resetting volumes or rebooting Windows. Diagnose the startup log before attempting broader recovery.
+
+## Generation deadline
+The provider operation has a single 30-second deadline across response headers and body. Heartbeat or whitespace chunks cannot extend it. Timeout produces a safe 503; the application does not silently select another provider. A free demo endpoint has no availability guarantee. For company use, select an approved backend with the required service level.

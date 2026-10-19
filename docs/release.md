@@ -1,6 +1,6 @@
 # Release checklist
 
-- [x] Tested implementation 039bb89 passed CI, including real Qdrant, CPU-only image, models and evaluation.
+- [x] Tested implementation a560f97 passed CI, including real Qdrant, CPU-only image, models and evaluation.
 - [x] Dependency audit and static security scan reviewed; no unresolved high-severity findings.
 - [x] Docker demo verified from the documented configuration.
 - [x] Public dataset, logs and fixtures contain only fictional content.
