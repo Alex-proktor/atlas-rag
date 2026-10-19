@@ -1,0 +1,9 @@
+name: atlas-rag
+version: 0.2.0
+description: Read-only access-controlled knowledge search
+manifest_version: 2
+api_version: 1
+provides_tools:
+  - atlas_search
+tags:
+  - retrieval
