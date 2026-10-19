@@ -9,9 +9,13 @@
 - Installed Hermes v0.21.5 plugin doctor: discovery, manifest parsing, import and actual runtime registration passed (one tool, no hooks).
 - Dependency audit after upgrading pip to 26.2.1 and setuptools to 84.0.0: no known vulnerabilities reported. See evaluation/dependency-audit.json.
 
+- GitHub CI run 39229373439 passed static checks, dependency audit, real Qdrant tests and the model-backed benchmark. On 24 bilingual synthetic queries: BM25 Recall@3 1.000 / MRR@3 0.9792 / nDCG@3 0.9846; dense 0.9583 / 0.9375 / 0.9430; hybrid 1.000 / 1.000 / 1.000. Raw results and provenance: evaluation/results.json. This small authored set is not evidence of enterprise-wide accuracy.
+- Final Windows non-service regression after the error-boundary change: 15 passed, 8 explicitly skipped (real Qdrant unavailable and Windows symlink permissions).
+- Final Bandit scan: zero findings, no skipped rules. Tracked-file credential pattern scan passed.
+
 ## Pending acceptance
-- Full model-backed retrieval benchmark and final rebuilt Docker smoke were interrupted by Docker Desktop engine failures (500 Internal Server Error from dockerDesktopLinuxEngine).
-- No retrieval metrics are claimed until a successful benchmark report exists.
+- Local model-backed smoke and benchmark were interrupted by Docker Desktop engine failures (500 Internal Server Error from dockerDesktopLinuxEngine). CI completed the benchmark instead; final Docker image smoke is still pending.
+- Optional CrossEncoder implementation has not yet had a real-model acceptance run.
 - Hermes end-to-end tool invocation against a running Atlas API is not yet verified.
 - Final CI, source scan and final-commit regression results must be recorded before closing the corresponding issues.
 - No independent production security review has taken place.
