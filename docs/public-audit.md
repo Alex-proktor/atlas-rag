@@ -1,4 +1,4 @@
-# Public repository review — 2026-10-19
+# Public repository review вЂ” 2026-10-19
 
 ## Remediation
 The writer policy now requires an explicit nonempty ACL within the credential groups.
@@ -19,7 +19,7 @@ Public samples are fictional. Reports omit local machine identifiers, home paths
 unrelated applications, credentials and personal account email addresses.
 Use repository-local Git author settings with the GitHub noreply address before committing.
 History cleanup replaces personal author/committer metadata and removes unrelated runtime
-details. A private offline backup is retained for recovery.
+details. A private local backup is retained for recovery.
 
 A branch-history rewrite cannot recall prior downloads, forks or GitHub cached PR references.
 Do not describe this as guaranteed deletion from the internet. Historical CI/evaluation
@@ -37,3 +37,6 @@ Run pytest with QDRANT_TEST_URL pointing at a disposable real Qdrant service.
 Run python scripts/check_secrets.py --history from a complete clone.
 CI also runs static analysis, a dependency audit, actual embedding/reranker evaluation
 and an authenticated Docker demonstration. See acceptance.md for historical release evidence.
+
+CI checks the authored candidate head. GitHub-generated PR merge metadata is outside
+the project's author control; the merge gate is a fast-forward of that verified head.
