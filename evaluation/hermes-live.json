@@ -1,0 +1,58 @@
+{
+  "status": "passed",
+  "registry": "installed Hermes PluginManager/ToolRegistry",
+  "python": "3.14.7",
+  "tool": "atlas_search",
+  "sources": [
+    {
+      "path": "backup.md",
+      "chunk": 0
+    },
+    {
+      "path": "retention.md",
+      "chunk": 0
+    },
+    {
+      "path": "secrets.md",
+      "chunk": 0
+    },
+    {
+      "path": "deployment.md",
+      "chunk": 0
+    },
+    {
+      "path": "expenses.md",
+      "chunk": 0
+    }
+  ],
+  "expected_evidence": "backup.md: retained for 30 days",
+  "reader_write_status": 403,
+  "invalid_token_status": 401,
+  "credential_in_report": false,
+  "http_answer": {
+    "status": "answered",
+    "answer": "Database backups run daily at 02:00 UTC and are retained for 30 days [1]",
+    "citations": [
+      {
+        "path": "backup.md",
+        "chunk": 0
+      }
+    ]
+  },
+  "verified_on": "2026-10-19",
+  "application_version": "0.2.1",
+  "tested_source": "039bb89edd3e40510d657c69469e3fd4e8e15628",
+  "ci_run": 39233062458,
+  "cpu_runtime": {
+    "torch": "2.14.1+cpu",
+    "cuda": null,
+    "local_pytest_passed": 23
+  },
+  "runtime_checks": {
+    "managed_python_imports": true,
+    "stt_tts_imports": true,
+    "worker_alive": true,
+    "fresh_gateway_heartbeat": true,
+    "telegram_polling_health_evidence": true
+  }
+}

@@ -9,7 +9,7 @@
       "recall": 1,
       "mrr": 0.9791666666666666,
       "ndcg": 0.9846220730654774,
-      "elapsed_seconds": 0.083,
+      "elapsed_seconds": 0.053,
       "cases": [
         {
           "query": "How does a new employee request a laptop?",
@@ -257,7 +257,7 @@
       "recall": 0.9583333333333334,
       "mrr": 0.9375,
       "ndcg": 0.9429554063988107,
-      "elapsed_seconds": 0.6,
+      "elapsed_seconds": 0.448,
       "cases": [
         {
           "query": "How does a new employee request a laptop?",
@@ -505,7 +505,7 @@
       "recall": 1,
       "mrr": 1,
       "ndcg": 1,
-      "elapsed_seconds": 0.667,
+      "elapsed_seconds": 0.452,
       "cases": [
         {
           "query": "How does a new employee request a laptop?",
@@ -753,7 +753,7 @@
       "recall": 1,
       "mrr": 1,
       "ndcg": 1,
-      "elapsed_seconds": 15.754,
+      "elapsed_seconds": 15.178,
       "cases": [
         {
           "query": "How does a new employee request a laptop?",
@@ -999,8 +999,8 @@
     }
   },
   "evidence": {
-    "run_id": 39230021766,
-    "commit": "df66867fea08409fe4c0f4cc6047e94d5f896dc2",
-    "artifact_id": 12175184372
+    "run_id": 39233062458,
+    "commit": "039bb89edd3e40510d657c69469e3fd4e8e15628",
+    "artifact_id": 12178227771
   }
 }
