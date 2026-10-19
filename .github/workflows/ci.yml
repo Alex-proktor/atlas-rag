@@ -1,10 +1,14 @@
 name: CI
 on: [push, pull_request]
+concurrency:
+  group: atlas-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     services:
       qdrant:
         image: qdrant/qdrant:v1.13.6
@@ -36,7 +40,7 @@ jobs:
       - name: Real Qdrant and provider protocol tests
         run: pytest -q
       - name: Measured multilingual retrieval
-        run: python -m atlas_rag.evaluate --output /tmp/results.json
+        run: python -m atlas_rag.evaluate --output /tmp/results.json --reranker cross-encoder/mmarco-mMiniLMv2-L12-H384-v1
       - uses: actions/upload-artifact@v4
         with:
           name: retrieval-evaluation
