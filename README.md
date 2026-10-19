@@ -95,15 +95,16 @@ pip-audit
 python -m atlas_rag.evaluate --dataset evaluation/queries.json
 ```
 
-Measured on the 24-query synthetic bilingual set (real model + Qdrant, CI run 39229373439):
+Measured on the 24-query synthetic bilingual set (real model + Qdrant, CI run 39230021766):
 
 | Retrieval | Recall@3 | MRR@3 | nDCG@3 |
 |---|---:|---:|---:|
 | BM25 | 1.0000 | 0.9792 | 0.9846 |
 | Dense | 0.9583 | 0.9375 | 0.9430 |
 | Hybrid RRF | 1.0000 | 1.0000 | 1.0000 |
+| Hybrid + CrossEncoder | 1.0000 | 1.0000 | 1.0000 |
 
-These are in-sample demonstration results, not a general accuracy claim. Reranking and independent enterprise evaluation remain separate acceptance steps.
+These are in-sample demonstration results, not a general accuracy claim. The real reranker was exercised; it does not improve this easy set. Independent enterprise evaluation remains necessary.
 
 See [evaluation protocol and limitations](docs/evaluation.md), the committed machine-readable results in `evaluation/`, and [acceptance evidence](docs/acceptance.md). Integration tests explicitly skip when their required real service is absent; CI supplies it. A small bilingual synthetic corpus demonstrates reproducibility, not general enterprise accuracy.
 
