@@ -1,15 +1,56 @@
 name: CI
-on:
-  push:
-  pull_request:
+on: [push, pull_request]
+concurrency:
+  group: atlas-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+permissions:
+  contents: read
 jobs:
-  test:
+  verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      qdrant:
+        image: qdrant/qdrant:v1.13.6
+        ports: ["6333:6333"]
+    env:
+      QDRANT_TEST_URL: http://localhost:6333
+      QDRANT_URL: http://localhost:6333
+      DOCS_ROOT: ${{ github.workspace }}/examples
+      STATE_ROOT: /tmp/atlas-ci-state
+      COLLECTION: atlas_ci
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - run: python -m pip install -e ".[dev]"
-      - run: python -m compileall -q atlas_rag
-      - run: pytest -q
+          python-version: "3.11"
+      - name: Install CPU runtime and dependencies
+        run: |
+          pip install pip==26.2.1 setuptools==84.0.0
+          pip install torch==2.14.1+cpu --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.lock
+          pip install --no-deps -e .
+      - name: Static checks
+        run: |
+          ruff check atlas_rag tests integrations
+          bandit -r atlas_rag integrations
+          python scripts/check_secrets.py
+      - name: Dependency audit
+        run: pip-audit
+      - name: Real Qdrant and provider protocol tests
+        run: pytest -q
+      - name: Measured multilingual retrieval
+        run: python -m atlas_rag.evaluate --output /tmp/results.json --reranker cross-encoder/mmarco-mMiniLMv2-L12-H384-v1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: retrieval-evaluation
+          path: /tmp/results.json
+      - name: Build and run authenticated Docker demo
+        run: |
+          python scripts/configure_demo.py
+          docker compose up -d --build
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8000/health && break || sleep 2; done
+          python scripts/demo.py
+      - name: Stop demo
+        if: always()
+        run: docker compose down -v

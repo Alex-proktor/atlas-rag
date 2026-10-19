@@ -1,43 +1,40 @@
-"""HTTP retrieval API. Answer generation is deliberately out of MVP scope."""
-from __future__ import annotations
-
-import hashlib
+"""Authenticated knowledge API; tenant and groups come only from credentials."""
+import logging
 import os
+from functools import lru_cache
 from pathlib import Path
-from uuid import UUID
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
+from filelock import Timeout
 from pydantic import BaseModel, Field
-from qdrant_client import QdrantClient, models
-from sentence_transformers import SentenceTransformer
+from qdrant_client import QdrantClient
 
-from atlas_rag.core import chunks, markdown_files
+from atlas_rag.generation import ProviderUnavailable, grounded_answer
+from atlas_rag.retrieval import retrieve
+from atlas_rag.security import BodyLimit, Identity, audit, authenticate, writer
+from atlas_rag.store import SnapshotStore
 
-app = FastAPI(title="Atlas RAG", version="0.1.0")
-ROOT = Path(os.getenv("DOCS_ROOT", "/data"))
-MODEL_NAME = os.getenv("EMBEDDING_MODEL", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
-COLLECTION = os.getenv("COLLECTION", "atlas_documents")
-QDRANT_URL = os.getenv("QDRANT_URL", "http://qdrant:6333")
-_model = None
-_client = None
-
-
-def encoder():
-    global _model
-    if _model is None:
-        _model = SentenceTransformer(MODEL_NAME)
-    return _model
+logging.basicConfig(level=logging.INFO)
+app = FastAPI(title="Atlas RAG", version="0.2.0")
+app.add_middleware(BodyLimit)
+app.middleware("http")(audit)
 
 
-def database():
-    global _client
-    if _client is None:
-        _client = QdrantClient(url=QDRANT_URL, timeout=20)
-    return _client
+@lru_cache
+def store():
+    from sentence_transformers import SentenceTransformer
+    model = os.getenv("EMBEDDING_MODEL", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+    return SnapshotStore(QdrantClient(url=os.getenv("QDRANT_URL", "http://qdrant:6333"), timeout=30),
+                         SentenceTransformer(model), Path(os.getenv("DOCS_ROOT", "/data")),
+                         os.getenv("COLLECTION", "atlas_documents"), model,
+                         Path(os.getenv("STATE_ROOT", str(Path.home() / ".local" / "state" / "atlas-rag"))))
 
 
 class IndexRequest(BaseModel):
     path: str = Field(default=".", max_length=512)
+    force: bool = False
+    acl: list[str] = Field(default_factory=list, max_length=32)
 
 
 class SearchRequest(BaseModel):
@@ -45,46 +42,54 @@ class SearchRequest(BaseModel):
     limit: int = Field(default=5, ge=1, le=20)
 
 
+@app.middleware("http")
+async def safe_error(request: Request, call_next):
+    try:
+        return await call_next(request)
+    except Exception as exc:
+        # Catch before ServerErrorMiddleware: never re-raise secret-bearing errors to Uvicorn.
+        logging.getLogger("atlas.audit").error("request_failed type=%s", type(exc).__name__)
+        return JSONResponse(status_code=503, content={"detail": "Service temporarily unavailable"})
+
+
 @app.get("/health")
 def health():
-    try:
-        database().get_collections()
-    except Exception as exc:
-        raise HTTPException(status_code=503, detail="Vector store unavailable") from exc
-    return {"status": "ok", "vector_store": "reachable"}
+    # Liveness only: do not download models or reveal infrastructure.
+    return {"status": "ok"}
+
+
+@app.get("/ready")
+def ready(identity: Identity = Depends(authenticate)):
+    store().client.get_collections()
+    return {"status": "ready"}
 
 
 @app.post("/index")
-def index(request: IndexRequest):
+def index(request: IndexRequest, identity: Identity = Depends(authenticate)):
+    writer(identity)
+    if identity.role != "admin" and not set(request.acl).issubset(identity.groups):
+        raise HTTPException(403, "ACL groups exceed writer permissions")
     try:
-        paths = markdown_files(ROOT, request.path)
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-    passages = []
-    for file in paths:
-        relative = file.resolve().relative_to(ROOT.resolve()).as_posix()
-        for number, passage in enumerate(chunks(file.read_text(encoding="utf-8"))):
-            passages.append((relative, number, passage))
-    if not passages:
-        return {"indexed": 0}
-    vectors = encoder().encode([p[2] for p in passages]).tolist()
-    client = database()
-    dimension = len(vectors[0])
-    if not client.collection_exists(COLLECTION):
-        client.create_collection(COLLECTION, vectors_config=models.VectorParams(size=dimension, distance=models.Distance.COSINE))
-    points = []
-    for (path, number, passage), vector in zip(passages, vectors):
-        identity = UUID(bytes=hashlib.sha256(f"{path}:{number}".encode()).digest()[:16], version=4)
-        points.append(models.PointStruct(id=str(identity), vector=vector, payload={"path": path, "chunk": number, "text": passage}))
-    client.upsert(collection_name=COLLECTION, points=points, wait=True)
-    return {"indexed": len(points)}
+        return store().sync(request.path, identity.tenant, request.acl, request.force)
+    except (ValueError, UnicodeError) as exc:
+        raise HTTPException(400, "Invalid document scope, configuration or limits") from exc
+    except Timeout as exc:
+        raise HTTPException(409, "Index update already running") from exc
+
+
+def find(request, identity):
+    return retrieve(store(), request.query, request.limit, identity.tenant, list(identity.groups),
+                    reranker=os.getenv("RERANKER_MODEL", ""))
 
 
 @app.post("/search")
-def search(request: SearchRequest):
-    client = database()
-    if not client.collection_exists(COLLECTION):
-        return {"results": []}
-    vector = encoder().encode(request.query).tolist()
-    matches = client.query_points(collection_name=COLLECTION, query=vector, limit=request.limit, with_payload=True)
-    return {"results": [{"score": hit.score, **(hit.payload or {})} for hit in matches.points]}
+def search(request: SearchRequest, identity: Identity = Depends(authenticate)):
+    return {"results": find(request, identity)}
+
+
+@app.post("/answer")
+def answer(request: SearchRequest, identity: Identity = Depends(authenticate)):
+    try:
+        return grounded_answer(request.query, find(request, identity))
+    except ProviderUnavailable as exc:
+        raise HTTPException(503, "Generation provider unavailable or invalid evidence") from exc
