@@ -3,18 +3,21 @@
 Only exact source quotations are released. This deliberately trades fluent synthesis
 for an enforceable grounding contract; semantic faithfulness needs separate evaluation.
 """
+import asyncio
 import json
 import os
 from urllib.parse import urlsplit
 
 import httpx
 
+PROVIDER_TIMEOUT_SECONDS = 30
+
 
 class ProviderUnavailable(Exception):
     pass
 
 
-def grounded_answer(query, sources):
+async def _grounded_answer(query, sources):
     if not sources:
         return {"status": "insufficient_evidence", "answer": "", "sources": []}
     base = os.getenv("LLM_BASE_URL", "").rstrip("/")
@@ -44,15 +47,17 @@ def grounded_answer(query, sources):
     headers = {"Authorization": "Bearer " + key} if key else {}
     try:
         # No redirects: an administrator's endpoint cannot redirect credentials elsewhere.
-        with httpx.Client(timeout=30, follow_redirects=False, trust_env=False) as client:
-            with client.stream("POST", base + "/chat/completions",
-                               headers=headers, json=payload) as response:
-                response.raise_for_status()
-                data = b""
-                for part in response.iter_bytes():
-                    data += part
-                    if len(data) > 65536:
-                        raise ValueError("Provider response too large")
+        async with asyncio.timeout(PROVIDER_TIMEOUT_SECONDS):
+            async with httpx.AsyncClient(timeout=PROVIDER_TIMEOUT_SECONDS,
+                                        follow_redirects=False, trust_env=False) as client:
+                async with client.stream("POST", base + "/chat/completions",
+                                         headers=headers, json=payload) as response:
+                    response.raise_for_status()
+                    data = b""
+                    async for part in response.aiter_bytes():
+                        data += part
+                        if len(data) > 65536:
+                            raise ValueError("Provider response too large")
         content = json.loads(data)["choices"][0]["message"]["content"]
         selected = json.loads(content)["evidence"]
         if not isinstance(selected, list) or len(selected) > 5:
@@ -69,5 +74,10 @@ def grounded_answer(query, sources):
             citations.append({**source, "citation": number, "quote": quote})
         return {"status": "answered" if answer else "insufficient_evidence",
                 "answer": "\n\n".join(answer), "sources": citations}
-    except (httpx.HTTPError, ValueError, KeyError, IndexError, TypeError) as exc:
+    except (TimeoutError, httpx.HTTPError, ValueError, KeyError, IndexError, TypeError) as exc:
         raise ProviderUnavailable() from exc
+
+
+def grounded_answer(query, sources):
+    """Synchronous facade for the FastAPI thread pool; enforce one total deadline."""
+    return asyncio.run(_grounded_answer(query, sources))
