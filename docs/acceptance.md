@@ -22,5 +22,8 @@ On 24 synthetic bilingual questions (12 English, 12 Russian), BM25 Recall@3/MRR@
 
 The author-created corpus is small and in-sample. Reranking did not improve this easy set. Timings include initialization and are not production latency measurements. The separate live positive/refusal/injection probe has three cases; it is not a general safety benchmark or Ragas faithfulness score.
 
+## Installed integration
+The read-only plugin was verified through the installed Hermes registry in a fresh process. An already-running agent may need a normal restart to refresh its tool list.
+
 ## Scope
 Issues #1–6 have their scoped implementation and acceptance evidence. No independent production security review has taken place. This remains a bounded single-node reference platform, not a certified enterprise production system. Company rollout still requires its own identity integration, representative evaluation, retention/backup policy and security review.

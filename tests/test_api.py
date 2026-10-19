@@ -51,3 +51,28 @@ def test_metrics():
     from atlas_rag.evaluate import metrics
     assert metrics(["a", "a", "b"], ["b"], 2) == {
         "recall": 1., "mrr": .5, "ndcg": pytest.approx(.6309297535714575)}
+
+
+def test_writer_acl_boundary_through_api(api, index, monkeypatch):
+    import atlas_rag.main as main
+
+    monkeypatch.setattr(main, "store", lambda: index)
+    doc = index.root / "default" / "restricted.md"
+    doc.write_text("restricted evidence", encoding="utf-8")
+    index.sync(acl=["executives"])
+    snapshot = index.active()
+    headers = {"Authorization": "Bearer " + "w" * 40}
+    for acl in ([], ["engineering"]):
+        response = api.post("/index", headers=headers, json={"acl": acl})
+        assert response.status_code == 403
+        assert index.active() == snapshot
+    assert api.post("/search", headers=headers,
+                    json={"query": "restricted"}).json()["results"] == []
+    # An administrator can establish a writer-owned scope explicitly.
+    index.sync(acl=["engineering"])
+    doc.write_text("authorized update", encoding="utf-8")
+    assert api.post("/index", headers=headers,
+                    json={"acl": ["engineering"]}).status_code == 200
+    results = api.post("/search", headers=headers,
+                       json={"query": "authorized"}).json()["results"]
+    assert results[0]["text"] == "authorized update"

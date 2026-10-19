@@ -1,24 +1,68 @@
-"""Check tracked/staged text without printing candidate secret values."""
+"""Check public files and optionally reachable Git history; never print matched values."""
+import argparse
 import re
 import subprocess
 from pathlib import Path
 
-patterns = [
-    re.compile(r"gh[pousr]_[A-Za-z0-9]{30,}"),
-    re.compile(r"github_pat_[A-Za-z0-9_]{30,}"),
-    re.compile(r"sk-(?:or-v1-)?[A-Za-z0-9_-]{32,}"),
-    re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
-]
-paths = subprocess.check_output(["git", "ls-files", "-z"]).decode().split("\0")
-failures = []
-for name in filter(None, paths):
-    path = Path(name)
-    if path.name in {".env", ".local-token"} or path.suffix in {".pem", ".key"}:
-        failures.append(name)
-    if path.is_file():
-        text = path.read_text(encoding="utf-8", errors="ignore")
-        if any(pattern.search(text) for pattern in patterns):
-            failures.append(name)
-if failures:
-    raise SystemExit("Potential sensitive files: " + ", ".join(sorted(set(failures))))
-print("Tracked-file credential pattern scan passed.")
+PATTERNS = {
+    "credential": re.compile(
+        r"gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|"
+        r"sk-(?:or-v1-)?[A-Za-z0-9_-]{32,}|"
+        r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|"
+        r"xox[baprs]-[A-Za-z0-9-]{20,}|"
+        r"AKIA[A-Z0-9]{16}|\b[0-9]{8,12}:[A-Za-z0-9_-]{30,}"),
+    "email": re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"),
+    "host": re.compile(r"\bDESKTOP-[A-Z0-9]{4,}\b"),
+    "home": re.compile(r"(?i)\b[A-Z]:\\Users\\(?!Public\\)[A-Za-z0-9_. -]+\\"),
+}
+ALLOWED_DOMAINS = {"example.com", "example.org", "example.net", "users.noreply.github.com"}
+
+
+def git(*args):
+    return subprocess.check_output(["git", *args])
+
+
+def findings(text):
+    result = []
+    for category, pattern in PATTERNS.items():
+        matches = pattern.findall(text)
+        if category == "email":
+            matches = [m for m in matches if m.rsplit("@", 1)[1].lower() not in ALLOWED_DOMAINS]
+        if matches:
+            result.append(category)
+    return result
+
+
+def scan(history=False):
+    failures = set()
+    paths = git("ls-files", "-z").decode().split("\0")
+    for name in filter(None, paths):
+        path = Path(name)
+        if ((path.name.startswith(".env") and path.name != ".env.example") or
+                path.name == ".local-token" or path.suffix in {".pem", ".key", ".p12", ".pfx"}):
+            failures.add("sensitive-filename:" + name)
+        if path.is_file():
+            for category in findings(path.read_text(encoding="utf-8", errors="replace")):
+                failures.add(category + ":" + name)
+    if history:
+        objects = git("rev-list", "--objects", "--all").decode().splitlines()
+        for line in objects:
+            oid = line.split(" ", 1)[0]
+            if git("cat-file", "-t", oid).strip() == b"blob":
+                for category in findings(git("cat-file", "blob", oid).decode("utf-8", errors="replace")):
+                    failures.add(category + ":historical-blob:" + oid)
+        for oid in git("rev-list", "--all").decode().splitlines():
+            metadata = git("show", "-s", "--format=%ae%n%ce%n%B", oid).decode()
+            for category in findings(metadata):
+                failures.add(category + ":commit:" + oid)
+    return sorted(failures)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--history", action="store_true")
+    args = parser.parse_args()
+    failures = scan(args.history)
+    if failures:
+        raise SystemExit("Public-data scan failed (values redacted):\n" + "\n".join(failures))
+    print("Public-data pattern scan passed" + (" including reachable history." if args.history else "."))

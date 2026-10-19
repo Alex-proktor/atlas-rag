@@ -8,7 +8,7 @@ The filesystem has a separate read-only directory per tenant. Writers may synchr
 Qdrant is on a private Compose network with no published port. Its administrator can read every snapshot; database administrators, host administrators and the credential configuration are trusted. Network isolation is not database-level encryption or an identity provider. Before multi-host operation, add database authentication, TLS and network policy.
 
 ## Enforced controls
-- Reader credentials cannot mutate the index. Writer ACLs must be a subset of their configured groups.
+- Reader credentials cannot mutate the index. Writers must provide a nonempty ACL within their configured groups. Every existing document in the synchronized scope must already have exactly that ACL. Only an admin can relabel existing documents or publish tenant-wide content; a broader directory sync fails before publication if it includes another ACL.
 - Path traversal, files outside tenant roots and symbolic-link files are excluded.
 - 16 KiB HTTP bodies, 2,000-character questions, at most 20 results.
 - 1 MB/document, 20 MB per sync, 25,000 chunks per global snapshot.

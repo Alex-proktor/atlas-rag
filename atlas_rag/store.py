@@ -37,7 +37,7 @@ class SnapshotStore:
             if offset is None:
                 return points
 
-    def sync(self, relative=".", tenant="default", acl=None, force=False):
+    def sync(self, relative=".", tenant="default", acl=None, force=False, writer_groups=None):
         """All writers must share state/lock. Old snapshots retained for in-flight readers."""
         with self.lock:
             if not re.fullmatch(r"[a-zA-Z0-9_-]{1,64}", tenant):
@@ -55,6 +55,13 @@ class SnapshotStore:
             old_by_id = {str(p.id): p for p in old}
             def in_scope(payload):
                 return payload["tenant"] == tenant and payload["path"].startswith(prefix)
+            # Validate the authoritative scope before changing data or permissions.
+            if writer_groups is not None:
+                if not acl or not set(acl).issubset(writer_groups):
+                    raise PermissionError("Writer requires explicit authorized ACL")
+                for point in old:
+                    if in_scope(point.payload) and point.payload.get("acl") != sorted(acl):
+                        raise PermissionError("Only an admin can change an existing ACL")
             retained = [models.PointStruct(id=p.id, vector=p.vector, payload=p.payload)
                         for p in old if not in_scope(p.payload)]
             additions, pending, texts = [], [], []

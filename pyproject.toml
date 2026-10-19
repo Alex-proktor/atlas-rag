@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "atlas-rag"
-version = "0.2.2"
+version = "0.2.3"
 description = "Provider-neutral, access-controlled corporate knowledge retrieval"
 requires-python = ">=3.11"
 dependencies = [

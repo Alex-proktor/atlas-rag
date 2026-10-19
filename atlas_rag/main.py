@@ -16,7 +16,7 @@ from atlas_rag.security import BodyLimit, Identity, audit, authenticate, writer
 from atlas_rag.store import SnapshotStore
 
 logging.basicConfig(level=logging.INFO)
-app = FastAPI(title="Atlas RAG", version="0.2.2")
+app = FastAPI(title="Atlas RAG", version="0.2.3")
 app.add_middleware(BodyLimit)
 app.middleware("http")(audit)
 
@@ -70,7 +70,10 @@ def index(request: IndexRequest, identity: Identity = Depends(authenticate)):
     if identity.role != "admin" and not set(request.acl).issubset(identity.groups):
         raise HTTPException(403, "ACL groups exceed writer permissions")
     try:
-        return store().sync(request.path, identity.tenant, request.acl, request.force)
+        return store().sync(request.path, identity.tenant, request.acl, request.force,
+                            writer_groups=list(identity.groups) if identity.role == "writer" else None)
+    except PermissionError as exc:
+        raise HTTPException(403, "Index scope or ACL exceeds writer permissions") from exc
     except (ValueError, UnicodeError) as exc:
         raise HTTPException(400, "Invalid document scope, configuration or limits") from exc
     except Timeout as exc:

@@ -8,7 +8,7 @@ Atlas is a Python / FastAPI / Qdrant reference platform for internal knowledge a
 
 **Adoption scope:** a bounded, single-node reference deployment for evaluation and customization. It is not a certified enterprise product. See [security boundaries](docs/security.md) before using confidential data.
 
-**Verified 0.2.2:** 24 tests passed locally and in CI; the CPU Docker deployment, real Hermes tool call, cited LLM answer and reader authorization were exercised. [Acceptance evidence](docs/acceptance.md).
+**Validation:** see [acceptance evidence](docs/acceptance.md) and the [public repository review](docs/public-audit.md) for measured checks, privacy remediation and deployment limits.
 
 ## Five-minute walkthrough
 
@@ -64,7 +64,7 @@ flowchart TD
   V --> O["Cited answer or abstention"]
 ```
 
-The LLM never decides access rights, executes tools, or receives secrets. Generation is deliberately extractive: the model selects relevant quotations; the server validates and formats them. Citation validation proves provenance, **not semantic relevance**. This restriction is documented rather than presented as unrestricted grounded synthesis.
+The LLM does not decide access rights or execute tools. Only authorized retrieved passages are included in model messages; application credentials are not included. Corpus owners must exclude secrets from indexed documents and approve external processing. Generation is deliberately extractive: the model selects relevant quotations; the server validates and formats them. Citation validation proves provenance, **not semantic relevance**. This restriction is documented rather than presented as unrestricted grounded synthesis.
 
 ## Bring your documents and models
 
@@ -116,6 +116,7 @@ See [evaluation protocol and limitations](docs/evaluation.md), the committed mac
 - [Threat model and security limits](docs/security.md)
 - [Hermes plugin contract](docs/hermes.md)
 - [Architecture decisions and sources](docs/architecture.md)
+- [Public repository review](docs/public-audit.md)
 - [Release checklist](docs/release.md)
 
 For a real company rollout: replace the demo identities with an identity gateway, load a representative corpus and relevance judgments, validate multilingual quality, obtain a security review and set retention/backup policy. Keep this repository free of proprietary documents and credentials.

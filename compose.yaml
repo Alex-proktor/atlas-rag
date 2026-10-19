@@ -1,7 +1,7 @@
 services:
   api:
     build: .
-    image: atlas-rag:0.2.2-cpu
+    image: atlas-rag:0.2.3-cpu
     ports:
       - "127.0.0.1:${ATLAS_PORT:-8000}:8000"
     environment:
@@ -29,7 +29,7 @@ services:
       - no-new-privileges:true
     cap_drop: [ALL]
   qdrant:
-    image: qdrant/qdrant:v1.13.6
+    image: qdrant/qdrant:v1.13.6@sha256:bd67306b6cc77c98122cada2321eb60b20d00b19d26cb61c86681e7bd5951498
     volumes:
       - qdrant-data:/qdrant/storage
     restart: unless-stopped
