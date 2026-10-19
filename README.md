@@ -6,7 +6,7 @@
 
 Atlas RAG is an open-source Python/FastAPI service that indexes Markdown documentation in Qdrant and returns relevant passages with explicit source references. It is intended as a reusable foundation for internal knowledge assistants, documentation search and agent integrations.
 
-**Status: early MVP.** The implementation is published, but end-to-end Docker deployment, security hardening and retrieval quality benchmarks have not yet been independently verified. It is **not production-ready**.
+**Status: local retrieval MVP verified on Windows/Docker (2026-10-19).** The API successfully indexed a Markdown document and returned a cited search result; 4 unit tests passed and 1 Windows symlink test was skipped. Enterprise security and retrieval quality benchmarks remain unverified. **Not production-ready.**
 
 ## Why Atlas?
 
@@ -71,16 +71,16 @@ This is a **single-user development service**. API and Qdrant ports bind to loca
 
 ## Quality and acceptance
 
-Automated unit tests cover chunking and path validation. The next quality gate is a repeatable Docker smoke test and a small labeled retrieval evaluation set. No accuracy, latency or reliability metrics are claimed until measured.
+Automated unit tests cover chunking and path validation. A manual Docker smoke test passed on 2026-10-19: health 200, index 200 (1 chunk), search 200 (source: atlas.md, score: 0.65073764). This is not a retrieval-quality benchmark. The next quality gate is an automated Docker smoke test and labeled evaluation dataset. No accuracy, latency or reliability metrics are claimed until measured.
 
 ## Roadmap
 
-1. **Foundation:** reproducible ingestion and cited retrieval, Docker smoke test, tests and operational fixes — [Issue #1](https://github.com/Alex-proktor/atlas-rag/issues/1).
-2. **Lifecycle:** incremental indexing, document update/delete sync and index migrations.
-3. **Retrieval quality:** lexical + vector hybrid search, reranking, labeled benchmarks, recall@k and citation checks.
-4. **Generation:** configurable OpenAI-compatible API (including self-hosted backends), grounded answers and abstention.
-5. **Enterprise:** authentication, document-level permissions, observability, deployment and threat model.
-6. **Integrations:** Hermes connector, polished demo, architecture and adoption guide.
+1. **Foundation:** reproducible ingestion and cited retrieval, Docker smoke test, tests and operational fixes — [Issue #1 (completed)](https://github.com/Alex-proktor/atlas-rag/issues/1).
+2. **Lifecycle:** incremental indexing, document update/delete sync and index migrations — [Issue #2](https://github.com/Alex-proktor/atlas-rag/issues/2).
+3. **Retrieval quality:** lexical + vector hybrid search, reranking, labeled benchmarks, recall@k and citation checks — [Issue #3](https://github.com/Alex-proktor/atlas-rag/issues/3).
+4. **Generation:** configurable OpenAI-compatible API (including self-hosted backends), grounded answers and abstention — [Issue #4](https://github.com/Alex-proktor/atlas-rag/issues/4).
+5. **Enterprise:** authentication, document-level permissions, observability, deployment and threat model — [Issue #5](https://github.com/Alex-proktor/atlas-rag/issues/5).
+6. **Integrations:** Hermes connector, polished demo, architecture and adoption guide — [Issue #6](https://github.com/Alex-proktor/atlas-rag/issues/6).
 
 ## License
 
