@@ -1,0 +1,170 @@
+[
+  {
+    "query": "How does a new employee request a laptop?",
+    "language": "en",
+    "relevant": [
+      "onboarding.md"
+    ]
+  },
+  {
+    "query": "Как новому сотруднику получить ноутбук?",
+    "language": "ru",
+    "relevant": [
+      "onboarding.md"
+    ]
+  },
+  {
+    "query": "How often are severity-one incident updates published?",
+    "language": "en",
+    "relevant": [
+      "incident.md"
+    ]
+  },
+  {
+    "query": "Как часто публикуют обновления при критическом инциденте?",
+    "language": "ru",
+    "relevant": [
+      "incident.md"
+    ]
+  },
+  {
+    "query": "How long are database backups retained?",
+    "language": "en",
+    "relevant": [
+      "backup.md"
+    ]
+  },
+  {
+    "query": "Сколько дней хранят резервные копии базы?",
+    "language": "ru",
+    "relevant": [
+      "backup.md"
+    ]
+  },
+  {
+    "query": "When should annual leave be approved?",
+    "language": "en",
+    "relevant": [
+      "vacation.md"
+    ]
+  },
+  {
+    "query": "За сколько рабочих дней нужно согласовать отпуск?",
+    "language": "ru",
+    "relevant": [
+      "vacation.md"
+    ]
+  },
+  {
+    "query": "What is required before production deployment?",
+    "language": "en",
+    "relevant": [
+      "deployment.md"
+    ]
+  },
+  {
+    "query": "Что требуется перед выпуском в рабочую среду?",
+    "language": "ru",
+    "relevant": [
+      "deployment.md"
+    ]
+  },
+  {
+    "query": "How often should service credentials be rotated?",
+    "language": "en",
+    "relevant": [
+      "secrets.md"
+    ]
+  },
+  {
+    "query": "Как часто меняют учётные данные сервисов?",
+    "language": "ru",
+    "relevant": [
+      "secrets.md"
+    ]
+  },
+  {
+    "query": "How quickly is access revoked after offboarding?",
+    "language": "en",
+    "relevant": [
+      "access.md"
+    ]
+  },
+  {
+    "query": "Как быстро отзывают доступ при увольнении?",
+    "language": "ru",
+    "relevant": [
+      "access.md"
+    ]
+  },
+  {
+    "query": "What evidence is required for reimbursement?",
+    "language": "en",
+    "relevant": [
+      "expenses.md"
+    ]
+  },
+  {
+    "query": "Какой документ нужен для возмещения расходов?",
+    "language": "ru",
+    "relevant": [
+      "expenses.md"
+    ]
+  },
+  {
+    "query": "How long are customer support tickets retained?",
+    "language": "en",
+    "relevant": [
+      "retention.md"
+    ]
+  },
+  {
+    "query": "Сколько хранят обращения клиентов в поддержку?",
+    "language": "ru",
+    "relevant": [
+      "retention.md"
+    ]
+  },
+  {
+    "query": "What must employees use on public Wi-Fi?",
+    "language": "en",
+    "relevant": [
+      "remote.md"
+    ]
+  },
+  {
+    "query": "Что обязательно при работе через общественный Wi-Fi?",
+    "language": "ru",
+    "relevant": [
+      "remote.md"
+    ]
+  },
+  {
+    "query": "When is internal IT support available?",
+    "language": "en",
+    "relevant": [
+      "support.md"
+    ]
+  },
+  {
+    "query": "В какое время работает внутренняя ИТ-поддержка?",
+    "language": "ru",
+    "relevant": [
+      "support.md"
+    ]
+  },
+  {
+    "query": "How much notice is required for breaking API changes?",
+    "language": "en",
+    "relevant": [
+      "api.md"
+    ]
+  },
+  {
+    "query": "За сколько дней предупреждают о несовместимых изменениях API?",
+    "language": "ru",
+    "relevant": [
+      "api.md"
+    ]
+  }
+]
