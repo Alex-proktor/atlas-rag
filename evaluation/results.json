@@ -1,0 +1,758 @@
+{
+  "dataset": "evaluation/queries.json",
+  "queries": 24,
+  "k": 3,
+  "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "reranker": null,
+  "modes": {
+    "bm25": {
+      "recall": 1,
+      "mrr": 0.9791666666666666,
+      "ndcg": 0.9846220730654774,
+      "elapsed_seconds": 0.068,
+      "cases": [
+        {
+          "query": "How does a new employee request a laptop?",
+          "language": "en",
+          "relevant": [
+            "onboarding.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Как новому сотруднику получить ноутбук?",
+          "language": "ru",
+          "relevant": [
+            "onboarding.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "How often are severity-one incident updates published?",
+          "language": "en",
+          "relevant": [
+            "incident.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Как часто публикуют обновления при критическом инциденте?",
+          "language": "ru",
+          "relevant": [
+            "incident.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "How long are database backups retained?",
+          "language": "en",
+          "relevant": [
+            "backup.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Сколько дней хранят резервные копии базы?",
+          "language": "ru",
+          "relevant": [
+            "backup.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "When should annual leave be approved?",
+          "language": "en",
+          "relevant": [
+            "vacation.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "За сколько рабочих дней нужно согласовать отпуск?",
+          "language": "ru",
+          "relevant": [
+            "vacation.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "What is required before production deployment?",
+          "language": "en",
+          "relevant": [
+            "deployment.md"
+          ],
+          "recall": 1,
+          "mrr": 0.5,
+          "ndcg": 0.6309297535714575
+        },
+        {
+          "query": "Что требуется перед выпуском в рабочую среду?",
+          "language": "ru",
+          "relevant": [
+            "deployment.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "How often should service credentials be rotated?",
+          "language": "en",
+          "relevant": [
+            "secrets.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Как часто меняют учётные данные сервисов?",
+          "language": "ru",
+          "relevant": [
+            "secrets.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "How quickly is access revoked after offboarding?",
+          "language": "en",
+          "relevant": [
+            "access.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Как быстро отзывают доступ при увольнении?",
+          "language": "ru",
+          "relevant": [
+            "access.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "What evidence is required for reimbursement?",
+          "language": "en",
+          "relevant": [
+            "expenses.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Какой документ нужен для возмещения расходов?",
+          "language": "ru",
+          "relevant": [
+            "expenses.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "How long are customer support tickets retained?",
+          "language": "en",
+          "relevant": [
+            "retention.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Сколько хранят обращения клиентов в поддержку?",
+          "language": "ru",
+          "relevant": [
+            "retention.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "What must employees use on public Wi-Fi?",
+          "language": "en",
+          "relevant": [
+            "remote.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Что обязательно при работе через общественный Wi-Fi?",
+          "language": "ru",
+          "relevant": [
+            "remote.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "When is internal IT support available?",
+          "language": "en",
+          "relevant": [
+            "support.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "В какое время работает внутренняя ИТ-поддержка?",
+          "language": "ru",
+          "relevant": [
+            "support.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "How much notice is required for breaking API changes?",
+          "language": "en",
+          "relevant": [
+            "api.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "За сколько дней предупреждают о несовместимых изменениях API?",
+          "language": "ru",
+          "relevant": [
+            "api.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        }
+      ]
+    },
+    "dense": {
+      "recall": 0.9583333333333334,
+      "mrr": 0.9375,
+      "ndcg": 0.9429554063988107,
+      "elapsed_seconds": 0.463,
+      "cases": [
+        {
+          "query": "How does a new employee request a laptop?",
+          "language": "en",
+          "relevant": [
+            "onboarding.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Как новому сотруднику получить ноутбук?",
+          "language": "ru",
+          "relevant": [
+            "onboarding.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "How often are severity-one incident updates published?",
+          "language": "en",
+          "relevant": [
+            "incident.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Как часто публикуют обновления при критическом инциденте?",
+          "language": "ru",
+          "relevant": [
+            "incident.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "How long are database backups retained?",
+          "language": "en",
+          "relevant": [
+            "backup.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Сколько дней хранят резервные копии базы?",
+          "language": "ru",
+          "relevant": [
+            "backup.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "When should annual leave be approved?",
+          "language": "en",
+          "relevant": [
+            "vacation.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "За сколько рабочих дней нужно согласовать отпуск?",
+          "language": "ru",
+          "relevant": [
+            "vacation.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "What is required before production deployment?",
+          "language": "en",
+          "relevant": [
+            "deployment.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Что требуется перед выпуском в рабочую среду?",
+          "language": "ru",
+          "relevant": [
+            "deployment.md"
+          ],
+          "recall": 1,
+          "mrr": 0.5,
+          "ndcg": 0.6309297535714575
+        },
+        {
+          "query": "How often should service credentials be rotated?",
+          "language": "en",
+          "relevant": [
+            "secrets.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Как часто меняют учётные данные сервисов?",
+          "language": "ru",
+          "relevant": [
+            "secrets.md"
+          ],
+          "recall": 0,
+          "mrr": 0,
+          "ndcg": 0
+        },
+        {
+          "query": "How quickly is access revoked after offboarding?",
+          "language": "en",
+          "relevant": [
+            "access.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Как быстро отзывают доступ при увольнении?",
+          "language": "ru",
+          "relevant": [
+            "access.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "What evidence is required for reimbursement?",
+          "language": "en",
+          "relevant": [
+            "expenses.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Какой документ нужен для возмещения расходов?",
+          "language": "ru",
+          "relevant": [
+            "expenses.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "How long are customer support tickets retained?",
+          "language": "en",
+          "relevant": [
+            "retention.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Сколько хранят обращения клиентов в поддержку?",
+          "language": "ru",
+          "relevant": [
+            "retention.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "What must employees use on public Wi-Fi?",
+          "language": "en",
+          "relevant": [
+            "remote.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Что обязательно при работе через общественный Wi-Fi?",
+          "language": "ru",
+          "relevant": [
+            "remote.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "When is internal IT support available?",
+          "language": "en",
+          "relevant": [
+            "support.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "В какое время работает внутренняя ИТ-поддержка?",
+          "language": "ru",
+          "relevant": [
+            "support.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "How much notice is required for breaking API changes?",
+          "language": "en",
+          "relevant": [
+            "api.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "За сколько дней предупреждают о несовместимых изменениях API?",
+          "language": "ru",
+          "relevant": [
+            "api.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        }
+      ]
+    },
+    "hybrid": {
+      "recall": 1,
+      "mrr": 1,
+      "ndcg": 1,
+      "elapsed_seconds": 0.528,
+      "cases": [
+        {
+          "query": "How does a new employee request a laptop?",
+          "language": "en",
+          "relevant": [
+            "onboarding.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Как новому сотруднику получить ноутбук?",
+          "language": "ru",
+          "relevant": [
+            "onboarding.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "How often are severity-one incident updates published?",
+          "language": "en",
+          "relevant": [
+            "incident.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Как часто публикуют обновления при критическом инциденте?",
+          "language": "ru",
+          "relevant": [
+            "incident.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "How long are database backups retained?",
+          "language": "en",
+          "relevant": [
+            "backup.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Сколько дней хранят резервные копии базы?",
+          "language": "ru",
+          "relevant": [
+            "backup.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "When should annual leave be approved?",
+          "language": "en",
+          "relevant": [
+            "vacation.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "За сколько рабочих дней нужно согласовать отпуск?",
+          "language": "ru",
+          "relevant": [
+            "vacation.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "What is required before production deployment?",
+          "language": "en",
+          "relevant": [
+            "deployment.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Что требуется перед выпуском в рабочую среду?",
+          "language": "ru",
+          "relevant": [
+            "deployment.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "How often should service credentials be rotated?",
+          "language": "en",
+          "relevant": [
+            "secrets.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Как часто меняют учётные данные сервисов?",
+          "language": "ru",
+          "relevant": [
+            "secrets.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "How quickly is access revoked after offboarding?",
+          "language": "en",
+          "relevant": [
+            "access.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Как быстро отзывают доступ при увольнении?",
+          "language": "ru",
+          "relevant": [
+            "access.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "What evidence is required for reimbursement?",
+          "language": "en",
+          "relevant": [
+            "expenses.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Какой документ нужен для возмещения расходов?",
+          "language": "ru",
+          "relevant": [
+            "expenses.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "How long are customer support tickets retained?",
+          "language": "en",
+          "relevant": [
+            "retention.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Сколько хранят обращения клиентов в поддержку?",
+          "language": "ru",
+          "relevant": [
+            "retention.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "What must employees use on public Wi-Fi?",
+          "language": "en",
+          "relevant": [
+            "remote.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "Что обязательно при работе через общественный Wi-Fi?",
+          "language": "ru",
+          "relevant": [
+            "remote.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "When is internal IT support available?",
+          "language": "en",
+          "relevant": [
+            "support.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "В какое время работает внутренняя ИТ-поддержка?",
+          "language": "ru",
+          "relevant": [
+            "support.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "How much notice is required for breaking API changes?",
+          "language": "en",
+          "relevant": [
+            "api.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        },
+        {
+          "query": "За сколько дней предупреждают о несовместимых изменениях API?",
+          "language": "ru",
+          "relevant": [
+            "api.md"
+          ],
+          "recall": 1,
+          "mrr": 1,
+          "ndcg": 1
+        }
+      ]
+    }
+  },
+  "evidence": {
+    "run_id": 39229373439,
+    "commit": "6eea0d40f6fe8c39ea49007b58ee2885620920a7",
+    "artifact_id": 12175128422
+  }
+}
