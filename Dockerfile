@@ -5,6 +5,7 @@ RUN python -m pip install --no-cache-dir pip==26.2.1 setuptools==84.0.0
 RUN pip install --no-cache-dir torch==2.14.1+cpu --index-url https://download.pytorch.org/whl/cpu
 COPY requirements.lock ./
 RUN pip install --no-cache-dir -r requirements.lock
+RUN python -c "import torch; assert torch.version.cuda is None, 'CPU image must not load CUDA'"
 COPY pyproject.toml ./
 COPY atlas_rag ./atlas_rag
 RUN pip install --no-cache-dir --no-deps .

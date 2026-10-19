@@ -16,7 +16,7 @@ from atlas_rag.security import BodyLimit, Identity, audit, authenticate, writer
 from atlas_rag.store import SnapshotStore
 
 logging.basicConfig(level=logging.INFO)
-app = FastAPI(title="Atlas RAG", version="0.2.0")
+app = FastAPI(title="Atlas RAG", version="0.2.1")
 app.add_middleware(BodyLimit)
 app.middleware("http")(audit)
 
