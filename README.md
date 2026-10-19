@@ -8,6 +8,8 @@ Atlas is a Python / FastAPI / Qdrant reference platform for internal knowledge a
 
 **Adoption scope:** a bounded, single-node reference deployment for evaluation and customization. It is not a certified enterprise product. See [security boundaries](docs/security.md) before using confidential data.
 
+**Verified 0.2.1:** 23 tests passed locally and in CI; the CPU Docker deployment, real Hermes tool call, cited LLM answer and reader authorization were exercised. [Acceptance evidence](docs/acceptance.md).
+
 ## Five-minute walkthrough
 
 Requires Docker Compose and Python 3.11+. Initial image/model downloads depend on your connection.
@@ -95,7 +97,7 @@ pip-audit
 python -m atlas_rag.evaluate --dataset evaluation/queries.json
 ```
 
-Measured on the 24-query synthetic bilingual set (real model + Qdrant, CI run 39230021766):
+Measured on the 24-query synthetic bilingual set (real model + Qdrant, CI run 39233062458):
 
 | Retrieval | Recall@3 | MRR@3 | nDCG@3 |
 |---|---:|---:|---:|

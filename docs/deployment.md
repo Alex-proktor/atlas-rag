@@ -33,3 +33,6 @@ To remove obsolete snapshots: stop the API, record the active alias target, back
 
 ## Health
 GET /health is unauthenticated liveness only. GET /ready requires credentials and loads the model/checks Qdrant. Monitor latency, error codes and resource use. Model downloads can make first readiness slow. Resource/request caps are bounded-demo defaults; tune from measured traffic, not guesses.
+
+## Windows automation startup
+If Docker Desktop reports that it cannot get ProgramData when launched from a remote process, preserve the standard Windows environment. Restore the missing process variable from [Environment]::GetFolderPath('CommonApplicationData') before launching Docker Desktop. This does not require resetting volumes or rebooting Windows. Diagnose the startup log before attempting broader recovery.
