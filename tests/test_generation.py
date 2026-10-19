@@ -72,3 +72,44 @@ def test_unavailable_provider(monkeypatch):
     monkeypatch.setenv("LLM_MODEL", "test")
     with pytest.raises(ProviderUnavailable):
         grounded_answer("question", [SOURCE])
+
+
+def test_total_deadline_includes_provider_heartbeat_body(monkeypatch):
+    """A slow streaming provider cannot extend the total generation deadline."""
+    import time
+
+    from atlas_rag import generation
+
+    class SlowHandler(BaseHTTPRequestHandler):
+        def log_message(self, *args):
+            pass
+
+        def do_POST(self):
+            self.rfile.read(int(self.headers["Content-Length"]))
+            self.send_response(200)
+            self.send_header("Transfer-Encoding", "chunked")
+            self.end_headers()
+            try:
+                for _ in range(60):
+                    self.wfile.write(b"1\r\n \r\n")
+                    self.wfile.flush()
+                    time.sleep(.025)
+                self.wfile.write(b"0\r\n\r\n")
+            except OSError:
+                pass
+
+    server = HTTPServer(("127.0.0.1", 0), SlowHandler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    monkeypatch.setenv("LLM_BASE_URL", f"http://127.0.0.1:{server.server_port}/v1")
+    monkeypatch.setenv("LLM_MODEL", "slow-test")
+    monkeypatch.setattr(generation, "PROVIDER_TIMEOUT_SECONDS", .15)
+    try:
+        started = time.monotonic()
+        with pytest.raises(ProviderUnavailable):
+            grounded_answer("question", [SOURCE])
+        assert time.monotonic() - started < .75
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join()
