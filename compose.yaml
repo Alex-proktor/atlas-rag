@@ -1,6 +1,7 @@
 services:
   api:
     build: .
+    image: atlas-rag:0.2.1-cpu
     ports:
       - "127.0.0.1:${ATLAS_PORT:-8000}:8000"
     environment:
