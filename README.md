@@ -8,7 +8,7 @@ Atlas is a Python / FastAPI / Qdrant reference platform for internal knowledge a
 
 **Adoption scope:** a bounded, single-node reference deployment for evaluation and customization. It is not a certified enterprise product. See [security boundaries](docs/security.md) before using confidential data.
 
-**Validation:** see [acceptance evidence](docs/acceptance.md) and the [public repository review](docs/public-audit.md) for measured checks, privacy remediation and deployment limits.
+**Validation:** see the [2026-10-22 acceptance](docs/acceptance.md) and [public repository review](docs/public-audit.md) for reproduced checks, privacy remediation and deployment limits.
 
 ## Five-minute walkthrough
 
@@ -87,12 +87,17 @@ Enable generation only after choosing an approved provider and data policy. Set 
 ## Verification and evaluation
 
 ```bash
-python -m pip install -e ".[dev]"
+# In an activated clean Python 3.11 virtual environment, matching Docker/CI:
+python -m pip install pip==26.2.1 setuptools==84.0.0
+python -m pip install torch==2.14.1+cpu --index-url https://download.pytorch.org/whl/cpu
+python -m pip install -r requirements.lock
+python -m pip install --no-deps -e .
 # Start a disposable Qdrant instance and set QDRANT_TEST_URL first.
 pytest -q
 ruff check atlas_rag tests integrations
 bandit -r atlas_rag integrations
 pip-audit
+python scripts/check_secrets.py --history
 # Uses actual embedding model + Qdrant, not a mocked search:
 python -m atlas_rag.evaluate --dataset evaluation/queries.json
 ```
@@ -109,6 +114,8 @@ Measured on the 24-query synthetic bilingual set (real model + Qdrant, CI run 39
 These are in-sample demonstration results, not a general accuracy claim. The real reranker was exercised; it does not improve this easy set. Independent enterprise evaluation remains necessary.
 
 See [evaluation protocol and limitations](docs/evaluation.md), the committed machine-readable results in `evaluation/`, and [acceptance evidence](docs/acceptance.md). Integration tests explicitly skip when their required real service is absent; CI supplies it. A small bilingual synthetic corpus demonstrates reproducibility, not general enterprise accuracy.
+
+The CPU wheel uses a local version suffix that the PyPI audit service cannot resolve. Audit its upstream version separately with `pip-audit --no-deps --disable-pip -r <file>` where the temporary file contains `torch==2.14.1`. This checks published advisories for that version, not the wheel's provenance. The local Atlas package has no PyPI audit record; review its source and tests.
 
 ## Integrate and adapt
 

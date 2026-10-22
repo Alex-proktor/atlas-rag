@@ -1,0 +1,150 @@
+{
+  "date": "2026-10-22",
+  "source_base": "ce0b6d54fc0102506f8b9f99f12921ca37ee10b2",
+  "tracking_issue": "https://github.com/Alex-proktor/atlas-rag/issues/11",
+  "scope": "single-node reference deployment using only public synthetic documents",
+  "clean_deployment": {
+    "readme_walkthrough_passed": true,
+    "new_qdrant_volume": true,
+    "new_model_cache_volume": true,
+    "new_writer_state_volume": true,
+    "dependency_build_layers_reused": true,
+    "initial_documents": 13,
+    "unauthenticated_search_status": 401,
+    "hybrid_top_path": "backup.md",
+    "hybrid_top_score": 0.03278688524590164,
+    "llm_required": false
+  },
+  "runtime": {
+    "python": "3.11.17",
+    "qdrant_server": "1.13.6",
+    "qdrant_client": "1.13.3",
+    "torch": "2.14.1+cpu",
+    "cuda": null,
+    "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "reranker_model": "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"
+  },
+  "tests": {
+    "pinned_linux_passed": 35,
+    "pinned_linux_skipped": 0,
+    "elapsed_seconds": 29.94,
+    "ruff": "passed, including scripts",
+    "bandit_findings": 0,
+    "real_git_in_ephemeral_test_layer": true
+  },
+  "security": {
+    "rebuilt_image_audit_exit_code": 0,
+    "audited_dependencies": 86,
+    "known_vulnerabilities": 0,
+    "certifi": "2026.10.19",
+    "resolved_audit_identifier": "PYSEC-2026-4320",
+    "audit_skips": [
+      "atlas-rag local project is not on PyPI",
+      "torch CPU wheel local version suffix unavailable on PyPI"
+    ],
+    "upstream_torch_2_14_1_advisory_query": "no known vulnerabilities",
+    "strengthened_pattern_scan_current_and_reachable_history": "passed",
+    "starting_reachable_commits": 32,
+    "starting_author_committer_email_policy": "GitHub noreply",
+    "available_cached_pr_snapshots_scanned": 9,
+    "legacy_cached_pr_metadata_limit": "Non-noreply email remains in old PR #7-9 commit records; clean branch history cannot recall caches or prior downloads."
+  },
+  "hermes": {
+    "actual_installed_registry": true,
+    "version": "0.21.5",
+    "python": "3.14.7",
+    "plugin_and_manifest_match_source": true,
+    "path": "backup.md",
+    "chunk": 0,
+    "expected_retention_present": true,
+    "reader_write_status": 403,
+    "invalid_token_status": 401,
+    "ready_status": 200,
+    "cold_request": "failed safely before readiness; fresh warmed invocation passed",
+    "telegram_tested": false
+  },
+  "live_llm": {
+    "provider": "OpenRouter",
+    "model": "liquid/lfm-2.5-2.6b:free",
+    "content": "only fictional public corpus passages",
+    "provider_mandatory": false,
+    "completed_requests": [
+      {
+        "case": "positive_citation",
+        "http_status": 200,
+        "status": "answered",
+        "expected_30_day_retention_present": true,
+        "quote_validated_against_source": true,
+        "citation_path": "backup.md",
+        "chunk": 0,
+        "capture": "HTTP response assertions; summarized, response body not retained"
+      },
+      {
+        "case": "unsupported_question",
+        "http_status": 503,
+        "status": "provider unavailable or invalid evidence",
+        "observation": "provider total deadline reached"
+      },
+      {
+        "case": "unsupported_question_repeat",
+        "http_status": 200,
+        "status": "insufficient_evidence",
+        "elapsed_seconds": 29.74
+      },
+      {
+        "case": "positive_citation_repeat",
+        "http_status": 503,
+        "elapsed_seconds": 35.66,
+        "observation": "includes retrieval and the 30-second provider deadline"
+      },
+      {
+        "case": "secret_extraction",
+        "http_status": 503,
+        "elapsed_seconds": 30.53,
+        "observation": "safe failure; no generated content released"
+      }
+    ],
+    "discarded_probe": {
+      "case": "secret_extraction",
+      "reason": "Operator restarted API during the in-flight probe; excluded and repeated after restoration."
+    },
+    "interpretation": "Individual integration and availability observations; no general safety, semantic quality or production SLO claim."
+  },
+  "lifecycle_acl_http": {
+    "passed": true,
+    "initial_probe_chunks": 4,
+    "updated_probe_chunks": 1,
+    "unchanged_sync_reused": true,
+    "stable_chunk_id": true,
+    "deletion_synchronized": true,
+    "acl_hidden": true,
+    "tenant_isolated": true,
+    "client_identity_override_rejected": true,
+    "writer_declassification_status": 403,
+    "writer_other_group_status": 403,
+    "path_traversal_status": 400,
+    "empty_tenant_refusal_status": 200,
+    "unconfigured_provider_status": 503
+  },
+  "service_recovery_http": {
+    "passed": true,
+    "qdrant_search_status": 503,
+    "qdrant_readiness_status": 503,
+    "qdrant_index_status": 503,
+    "liveness_during_outage": 200,
+    "recovered_without_api_restart": true,
+    "api_and_database_restart_preserved_results": true,
+    "reindex_after_restart_unchanged": true
+  },
+  "reranker_http": {
+    "passed": true,
+    "top_path": "backup.md",
+    "actual_cross_encoder_scores": true
+  },
+  "provider_failure_http": {
+    "passed": true,
+    "unreachable_provider_status": 503,
+    "search_available": true,
+    "original_provider_configuration_restored": true
+  }
+}

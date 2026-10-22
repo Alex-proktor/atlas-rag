@@ -3,7 +3,7 @@
 ## Local demonstration
 Run `python scripts/configure_demo.py`, then `docker compose up --build -d`. Never commit `.env` or `.local-token`. The generated identity is an admin for the synthetic default tenant. To authorize Swagger requests, enter `Bearer <token>` in the Authorization header; curl and scripts also work.
 
-For a different host port set ATLAS_PORT in .env. Only loopback is published. Qdrant is not externally published.
+For a different host port set ATLAS_PORT in .env and set ATLAS_URL to the matching loopback URL when running scripts/demo.py. Only loopback is published. Qdrant is not externally published. Wait for authenticated /ready before calling the Hermes plugin; its 40-second request budget may expire during the initial model download. /health alone does not establish model readiness.
 
 ## Corporate customization
 1. Replace the examples mount with read-only `/approved-documents:/data:ro`.
@@ -17,7 +17,7 @@ For a different host port set ATLAS_PORT in .env. Only loopback is published. Qd
 ## Lifecycle and consistency
 POST /index accepts path (relative directory), force (re-embed scope), and acl (group list). It is an authoritative sync of Markdown files in that scope: removed documents and stale chunks disappear in the newly published snapshot. All files in that scope receive the supplied ACL; split directories by access policy when needed.
 
-The store compares full content hashes and reuses vectors for unchanged chunks. It copies the complete live index into a new Qdrant collection, validates point count, then atomically updates a live alias. Queries pin one immutable collection for both retrieval stages. Failed embedding/upload/validation leaves the old alias untouched. Emptying a scope publishes an empty replacement when appropriate.
+The store compares full content hashes and reuses vectors for unchanged documents. Editing a document changes its hash and re-embeds all of its chunks. It copies the complete live index into a new Qdrant collection, validates point count, then atomically updates a live alias. Queries pin one immutable collection for both retrieval stages. Failed embedding/upload/validation leaves the old alias untouched. Emptying a scope publishes an empty replacement when appropriate.
 
 This provides atomic visibility, not low-cost delta storage: embedding work is incremental; snapshot storage/upload is O(total index). Intended maximum is 25,000 chunks. BM25 scans authorized chunks per query. Use Qdrant sparse vectors/inverted indexes before scaling beyond this bounded reference design.
 

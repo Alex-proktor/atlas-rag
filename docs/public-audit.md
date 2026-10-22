@@ -6,10 +6,15 @@ Every existing document in an authoritative sync scope must already have exactly
 Only tenant admins can relabel existing documents or publish tenant-wide content.
 A rejected sync preserves the published snapshot, including when files were removed locally.
 
-New regression coverage exercises the FastAPI route against real Qdrant, same-ACL updates,
+Regression coverage exercises the FastAPI route against real Qdrant, same-ACL updates,
 cross-ACL overwrite/deletion rejection and administrator relabeling. The public-data guard
 checks tracked files and optionally reachable history, reporting categories and object IDs
 without matched values. It is a pattern scanner, not a guarantee against every secret type.
+
+The 2026-10-22 acceptance fixed two scanner omissions: deleted sensitive filenames
+were not checked in history, and private home paths using forward slashes were missed.
+History now checks changed filenames as well as blob content, including a blob reused
+under different names. Regression fixtures contain only synthetic values.
 
 Actions and Qdrant are pinned to immutable identifiers. The CPU base image is digest-pinned.
 Model revisions and package hashes still require an organization's artifact-registry policy.
@@ -24,6 +29,16 @@ details. A private local backup is retained for recovery.
 A branch-history rewrite cannot recall prior downloads, forks or GitHub cached PR references.
 Do not describe this as guaranteed deletion from the internet. Historical CI/evaluation
 reports retain their original provenance; the source IDs precede the privacy rewrite.
+
+The fresh audit found no matches in current files or the 32 reachable branch-history
+commits at the starting main. Their author/committer emails use GitHub noreply. All nine
+available commit snapshots from PRs #7-10 also passed the content/filename check.
+Legacy cached commit metadata in PRs #7-9 still contains non-noreply email addresses;
+PR #10 metadata is clean. Those records are an explicit unresolved privacy limit.
+
+The dependency audit flagged certifi 2026.10.18 under PYSEC-2026-4320. The lock now
+uses 2026.10.19, the fixed version recorded by the audit database; the image must be
+rebuilt to use it. See the [advisory](https://osv.dev/vulnerability/PYSEC-2026-4320).
 
 ## Quality boundaries
 The 24-question bilingual synthetic evaluation is in-sample. Its perfect hybrid score
