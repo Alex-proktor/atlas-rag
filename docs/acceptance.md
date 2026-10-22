@@ -19,9 +19,11 @@ image build. The demo indexed all 13 public documents, retrieved backup.md with 
 
 An immediate repeat of the documented up/demo sequence exposed an API startup race:
 demo.py received RemoteDisconnected before Uvicorn was ready. The demo now waits up
-to 60 seconds for liveness before its first write; indexing retains its 300-second
-model-loading budget. CI runs the README sequence directly, without a separate shell
+to 60 seconds for liveness, then 300 seconds for authenticated model/database readiness
+before its first write. CI runs the README sequence directly, without a separate shell
 readiness loop. An immediate restart/demo repeat verifies this fix on the real service.
+With Qdrant deliberately stopped, the updated demo stayed in readiness waiting and
+completed successfully after Qdrant restarted; it does not retry a mutating index call.
 
 ### Real service checks
 

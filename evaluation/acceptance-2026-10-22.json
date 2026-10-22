@@ -17,7 +17,9 @@
     "immediate_demo_startup_race_reproduced": "RemoteDisconnected before API readiness",
     "bounded_startup_wait_seconds": 60,
     "immediate_restart_then_demo_passed": true,
-    "final_default_only_documents": 13
+    "final_default_only_documents": 13,
+    "authenticated_readiness_budget_seconds": 300,
+    "demo_waited_for_stopped_database_then_succeeded": true
   },
   "runtime": {
     "python": "3.11.17",

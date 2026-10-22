@@ -22,7 +22,7 @@ docker compose up --build -d
 python scripts/demo.py
 ```
 
-The setup generates a random local credential. The demo waits up to 60 seconds for API startup, then indexes the synthetic English/Russian handbook, searches it, verifies a cited source and confirms that unauthenticated retrieval is rejected. Initial indexing allows up to 300 seconds for model loading. It never uses your private documents or calls a paid model. Interactive API documentation: http://127.0.0.1:8000/docs.
+The setup generates a random local credential. The demo waits up to 60 seconds for API startup and 300 seconds for authenticated model/database readiness, then indexes the synthetic English/Russian handbook, searches it, verifies a cited source and confirms that unauthenticated retrieval is rejected. It never uses your private documents or calls a paid model. Interactive API documentation: http://127.0.0.1:8000/docs.
 
 Example request after setting `ATLAS_TOKEN` from your private `.local-token`:
 
