@@ -13,7 +13,11 @@
     "unauthenticated_search_status": 401,
     "hybrid_top_path": "backup.md",
     "hybrid_top_score": 0.03278688524590164,
-    "llm_required": false
+    "llm_required": false,
+    "immediate_demo_startup_race_reproduced": "RemoteDisconnected before API readiness",
+    "bounded_startup_wait_seconds": 60,
+    "immediate_restart_then_demo_passed": true,
+    "final_default_only_documents": 13
   },
   "runtime": {
     "python": "3.11.17",
@@ -148,7 +152,7 @@
     "search_available": true,
     "original_provider_configuration_restored": true
   },
-  "integrated_main": "78cf679467a264f8e151238636b92dd2f9f1e980",
+  "integrated_main": "9bc99a5a24d31f64eae9b7de6927b8d2e5544111",
   "compose_configuration": {
     "default_model_and_collection_passed": true,
     "explicit_model_and_collection_overrides_passed": true,

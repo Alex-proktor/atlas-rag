@@ -17,6 +17,12 @@ this is a clean application/data/model-cache deployment, not a claim of a cache-
 image build. The demo indexed all 13 public documents, retrieved backup.md with the
 30-day passage and rejected unauthenticated search with 401. No LLM was configured.
 
+An immediate repeat of the documented up/demo sequence exposed an API startup race:
+demo.py received RemoteDisconnected before Uvicorn was ready. The demo now waits up
+to 60 seconds for liveness before its first write; indexing retains its 300-second
+model-loading budget. CI runs the README sequence directly, without a separate shell
+readiness loop. An immediate restart/demo repeat verifies this fix on the real service.
+
 ### Real service checks
 
 The following checks used actual HTTP requests, Qdrant 1.13.6 and the multilingual

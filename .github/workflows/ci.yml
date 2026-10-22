@@ -53,7 +53,6 @@ jobs:
         run: |
           python scripts/configure_demo.py
           docker compose up -d --build
-          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8000/health && break || sleep 2; done
           python scripts/demo.py
       - name: Stop demo
         if: always()

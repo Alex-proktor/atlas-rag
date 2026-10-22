@@ -1,6 +1,8 @@
 """Public synthetic corpus HTTP smoke; standard-library only."""
 import json
 import os
+import time
+from http.client import HTTPException
 from pathlib import Path
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
@@ -16,6 +18,19 @@ def call(path, payload):
         return json.load(response)
 
 
+def wait_for_api():
+    deadline = time.monotonic() + 60
+    while True:
+        try:
+            with urlopen(base + "/health", timeout=2):
+                return
+        except (OSError, HTTPException):
+            if time.monotonic() >= deadline:
+                raise SystemExit("Atlas API did not start within 60 seconds; inspect Compose logs.") from None
+            time.sleep(1)
+
+
+wait_for_api()
 indexed = call("/index", {})
 result = call("/search", {"query": "How long are database backups retained?", "limit": 3})
 assert any(s["path"] == "backup.md" and "30 days" in s["text"] for s in result["results"])
