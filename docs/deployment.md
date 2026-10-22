@@ -24,6 +24,8 @@ This provides atomic visibility, not low-cost delta storage: embedding work is i
 All writers must use the same STATE_ROOT lock volume; supported topology is one API instance. Do not deploy independent writers with separate locks. Initial migration uses a new _live alias and does not touch legacy MVP collections.
 
 ## Model migration
+
+Docker Compose forwards `EMBEDDING_MODEL` and `COLLECTION` from `.env` or the shell. After changing them, recreate the API with `docker compose up -d --force-recreate api`, then index and verify the new collection. A restart alone does not apply changed container environment variables.
 Embedding model/chunker fingerprint mismatch rejects a sync. Set a new COLLECTION, reindex fully, validate, then route readers to it. Keep the old collection for rollback. Changing upstream model files without changing the model identifier is unsupported: pin model revisions in an artifact registry for controlled releases.
 
 ## Backup, rollback and physical deletion

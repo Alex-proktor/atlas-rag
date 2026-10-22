@@ -6,6 +6,8 @@ services:
       - "127.0.0.1:${ATLAS_PORT:-8000}:8000"
     environment:
       QDRANT_URL: http://qdrant:6333
+      COLLECTION: ${COLLECTION:-atlas_documents}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2}
       DOCS_ROOT: /data
       STATE_ROOT: /home/atlas/state
       HF_HOME: /home/atlas/.cache/huggingface
