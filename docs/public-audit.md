@@ -15,6 +15,8 @@ The 2026-10-22 acceptance fixed two scanner omissions: deleted sensitive filenam
 were not checked in history, and private home paths using forward slashes were missed.
 History now checks changed filenames as well as blob content, including a blob reused
 under different names. Regression fixtures contain only synthetic values.
+The exact public GitHub merge-service noreply address is allowed; other addresses
+at github.com remain subject to the personal-email guard.
 
 Actions and Qdrant are pinned to immutable identifiers. The CPU base image is digest-pinned.
 Model revisions and package hashes still require an organization's artifact-registry policy.

@@ -18,6 +18,7 @@ PATTERNS = {
         r"/home/(?!atlas/)[A-Za-z0-9_.-]+/"),
 }
 ALLOWED_DOMAINS = {"example.com", "example.org", "example.net", "users.noreply.github.com"}
+ALLOWED_EMAILS = {"noreply@github.com"}  # GitHub's public merge-service identity only.
 
 
 def git(*args):
@@ -29,7 +30,8 @@ def findings(text):
     for category, pattern in PATTERNS.items():
         matches = pattern.findall(text)
         if category == "email":
-            matches = [m for m in matches if m.rsplit("@", 1)[1].lower() not in ALLOWED_DOMAINS]
+            matches = [m for m in matches if m.lower() not in ALLOWED_EMAILS and
+                       m.rsplit("@", 1)[1].lower() not in ALLOWED_DOMAINS]
         if matches:
             result.append(category)
     return result

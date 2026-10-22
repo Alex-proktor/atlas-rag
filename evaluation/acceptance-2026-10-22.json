@@ -47,7 +47,8 @@
     "starting_reachable_commits": 32,
     "starting_author_committer_email_policy": "GitHub noreply",
     "available_cached_pr_snapshots_scanned": 9,
-    "legacy_cached_pr_metadata_limit": "Non-noreply email remains in old PR #7-9 commit records; clean branch history cannot recall caches or prior downloads."
+    "legacy_cached_pr_metadata_limit": "Non-noreply email remains in old PR #7-9 commit records; clean branch history cannot recall caches or prior downloads.",
+    "exact_public_github_merge_service_email_allowed": true
   },
   "hermes": {
     "actual_installed_registry": true,
@@ -146,5 +147,11 @@
     "unreachable_provider_status": 503,
     "search_available": true,
     "original_provider_configuration_restored": true
+  },
+  "integrated_main": "78cf679467a264f8e151238636b92dd2f9f1e980",
+  "compose_configuration": {
+    "default_model_and_collection_passed": true,
+    "explicit_model_and_collection_overrides_passed": true,
+    "method": "actual docker compose config --format json, parsed without publishing credentials"
   }
 }

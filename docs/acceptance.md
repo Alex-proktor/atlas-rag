@@ -5,6 +5,8 @@
 Starting main was independently fetched and verified as
 `ce0b6d54fc0102506f8b9f99f12921ca37ee10b2`. No open issues or PRs existed at preflight;
 [Issue #11](https://github.com/Alex-proktor/atlas-rag/issues/11) tracks this acceptance.
+The candidate and final CI/merge state are linked in
+[PR #13](https://github.com/Alex-proktor/atlas-rag/pull/13).
 The existing deployment and other worktrees were preserved. Architecture and relevance
 evaluation changes are outside this acceptance patch.
 
@@ -65,6 +67,13 @@ fresh process, after warming model readiness. The Telegram runtime was not teste
 The public-data scanner missed removed sensitive filenames in history and private home
 paths with forward slashes. Both omissions now have synthetic regression coverage.
 The dependency audit flagged certifi 2026.10.18; requirements.lock now pins 2026.10.19.
+Parallel [PR #12](https://github.com/Alex-proktor/atlas-rag/pull/12) delivered that pin
+and fixed Compose forwarding of EMBEDDING_MODEL and COLLECTION. Its merged main is
+included in this candidate. The merge exposed one additional scanner false positive:
+GitHub's public merge-service noreply address is now allowed exactly, without allowing
+other addresses at github.com.
+Actual Compose config resolution passed both default and explicit model/collection
+overrides; configuration output containing credentials was not published.
 Deployment instructions now correctly describe document-level embedding reuse and
 Hermes cold-start readiness. No runtime behavior change was needed for the exercised
 Qdrant recovery or authorization paths.

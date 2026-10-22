@@ -17,6 +17,8 @@ def test_guard_detects_without_exposing_values():
     assert guard.findings("DESKTOP-" + "ABC123") == ["host"]
     assert guard.findings("example" + "@" + "example.com") == []
     assert guard.findings("4922872+Alex-proktor" + "@" + "users.noreply.github.com") == []
+    assert guard.findings("noreply" + "@" + "github.com") == []
+    assert guard.findings("person" + "@" + "github.com") == ["email"]
 
 
 @pytest.mark.parametrize("home_path", [
